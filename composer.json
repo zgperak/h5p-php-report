@@ -8,6 +8,7 @@
             "Zgperak\\H5pPhpReport\\": ""
         },
         "classmap": [
+            "html-purifier/HtmlReportPurifier.php",
             "h5p-report.class.php",
             "h5p-report-xapi-data.class.php",
             "type-processors/compound/documentation-tool-processor.class.php",

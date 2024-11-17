@@ -1,4 +1,5 @@
 <?php
+namespace Zgperak\H5pPhpReport\HtmlReportPurifier;
 
 /**
  * Class HtmlPurifier

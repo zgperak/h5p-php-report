@@ -1,7 +1,8 @@
 <?php
 namespace Zgperak\H5pPhpReport\TypeProcessors;
 
-require(__DIR__ . '/../html-purifier/HtmlReportPurifier.php');
+use Zgperak\H5pPhpReport\H5PReportXAPIData;
+use Zgperak\H5pPhpReport\HtmlReportPurifier\HtmlReportPurifier;
 
 /**
  * Class TypeProcessor
@@ -19,12 +20,12 @@ abstract class TypeProcessor {
   /**
    * Generate HTML for report
    *
-   * @param object $xapiData
+   * @param H5PReportXAPIData $xapiData
    * @param bool $disableScoring Disables scoring
    *
    * @return string HTML as string
    */
-  public function generateReport($xapiData, $disableScoring = false, $allowStyles = false) {
+  public function generateReport(H5PReportXAPIData $xapiData, $disableScoring = false, $allowStyles = false) {
     $this->xapiData       = $xapiData;
     $this->disableScoring = $disableScoring;
 
@@ -61,16 +62,16 @@ abstract class TypeProcessor {
    *
    * @return object Score settings
    */
-  protected function getScoreSettings($xapiData) {
+  protected function getScoreSettings(H5PReportXAPIData  $xapiData) {
     $scoreSettings = (object) [];
 
-    if (!isset($xapiData->raw_score) || !isset($xapiData->max_score)) {
+    if (null === $xapiData->getScoreRaw() || null === $xapiData->getScoreMax()) {
       return $scoreSettings;
     }
 
     // Grab scores and score labels
-    $scoreSettings->rawScore = $xapiData->raw_score;
-    $scoreSettings->maxScore = $xapiData->max_score;
+    $scoreSettings->rawScore = $xapiData->getScoreRaw();
+    $scoreSettings->maxScore = $xapiData->getScoreMax();
 
     $scoreSettings->scoreLabel = 'Score:';
     if (isset($xapiData->score_label)) {
@@ -88,8 +89,8 @@ abstract class TypeProcessor {
     }
 
     // Scaled score
-    if (isset($xapiData->score_scale)) {
-      $scoreSettings->scoreScale = $xapiData->score_scale;
+    if (null !== $xapiData->getScoreScaled()) {
+      $scoreSettings->scoreScale = $xapiData->getScoreScaled();
 
       $scoreSettings->scaledScoreLabel = 'Scaled score:';
       if (isset($xapiData->score_label)) {
@@ -181,14 +182,14 @@ abstract class TypeProcessor {
   /**
    * Decode extras from xAPI data.
    *
-   * @param stdClass $xapiData
+   * @param H5PReportXAPIData $xapiData
    *
    * @return stdClass
    */
-  protected function getExtras($xapiData) {
-    $extras = ($xapiData->additionals === '' ? new stdClass() : json_decode($xapiData->additionals));
-    if (isset($xapiData->children)) {
-      $extras->children = $xapiData->children;
+  protected function getExtras(H5PReportXAPIData $xapiData) {
+    $extras = ($xapiData->getAdditionals() === '' ? new stdClass() : json_decode($xapiData->getAdditionals()));
+    if (!empty($xapiData->getChildren())) {
+      $extras->children = $xapiData->getChildren();
     }
 
     // Send the content id to the view for dynamic grading
@@ -202,34 +203,34 @@ abstract class TypeProcessor {
   /**
    * Decode and retrieve 'en-US' description from xAPI data.
    *
-   * @param stdClass $xapiData
+   * @param H5PReportXAPIData $xapiData
    *
    * @return string Description as a string
    */
-  protected function getDescription($xapiData) {
-    return $xapiData->description;
+  protected function getDescription(H5PReportXAPIData $xapiData) {
+    return $xapiData->getDescription();
   }
 
   /**
    * Decode and retrieve Correct Responses Pattern from xAPI data.
    *
-   * @param stdClass $xapiData
+   * @param H5PReportXAPIData $xapiData
    *
    * @return array Correct responses pattern as an array
    */
-  protected function getCRP($xapiData) {
-    return json_decode($xapiData->correct_responses_pattern, true);
+  protected function getCRP(H5PReportXAPIData $xapiData) {
+    return json_decode($xapiData->getCorrectResponsesPattern(), true);
   }
 
   /**
    * Decode and retrieve user response from xAPI data.
    *
-   * @param stdClass $xapiData
+   * @param H5PReportXAPIData $xapiData
    *
    * @return string User response
    */
-  protected function getResponse($xapiData) {
-    return $xapiData->response;
+  protected function getResponse(H5PReportXAPIData  $xapiData) {
+    return $xapiData->getResponse();
   }
 
   /**

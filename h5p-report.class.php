@@ -1,6 +1,18 @@
 <?php
 namespace Zgperak\H5pPhpReport;
 
+use Zgperak\H5pPhpReport\TypeProcessors\ChoiceProcessor;
+use Zgperak\H5pPhpReport\TypeProcessors\Compound\GoalsAssessmentPageProcessor;
+use Zgperak\H5pPhpReport\TypeProcessors\Compound\GoalsPageProcessor;
+use Zgperak\H5pPhpReport\TypeProcessors\Compound\StandardPageProcessor;
+use Zgperak\H5pPhpReport\TypeProcessors\CompoundProcessor;
+use Zgperak\H5pPhpReport\TypeProcessors\DocumentationToolProcessor;
+use Zgperak\H5pPhpReport\TypeProcessors\FillInProcessor;
+use Zgperak\H5pPhpReport\TypeProcessors\IVOpenEndedQuestionProcessor;
+use Zgperak\H5pPhpReport\TypeProcessors\LongChoiceProcessor;
+use Zgperak\H5pPhpReport\TypeProcessors\MatchingProcessor;
+use Zgperak\H5pPhpReport\TypeProcessors\TrueFalseProcessor;
+
 /**
  * Class H5PReport
  * @property  fillInProcessor
@@ -10,24 +22,24 @@ class H5PReport {
   private static $version = '1.1.0';
 
   private static $processorMap = array(
-    'compound' => 'CompoundProcessor',
-    'fill-in' => 'FillInProcessor',
-    'long-fill-in' => 'FillInProcessor',
-    'true-false' => 'TrueFalseProcessor',
-    'matching' => 'MatchingProcessor',
-    'choice' => 'ChoiceProcessor',
-    'long-choice' => 'LongChoiceProcessor',
+      'compound' => CompoundProcessor::class,
+      'fill-in' => FillInProcessor::class,
+      'long-fill-in' => FillInProcessor::class,
+      'true-false' => TrueFalseProcessor::class,
+      'matching' => MatchingProcessor::class,
+      'choice' => ChoiceProcessor::class,
+      'long-choice' => LongChoiceProcessor::class,
   );
 
   private static $versionExtension = 'https://h5p.org/x-api/h5p-reporting-version';
   private static $contentTypeExtension = 'https://h5p.org/x-api/h5p-machine-name';
 
   public static $contentTypeProcessors = array(
-    'H5P.DocumentationTool' => 'DocumentationToolProcessor',
-    'H5P.GoalsPage' => 'GoalsPageProcessor',
-    'H5P.GoalsAssessmentPage' => 'GoalsAssessmentPageProcessor',
-    'H5P.StandardPage' => 'StandardPageProcessor',
-    'H5P.FreeTextQuestion' => 'IVOpenEndedQuestionProcessor',
+      'H5P.DocumentationTool' => DocumentationToolProcessor::class,
+      'H5P.GoalsPage' => GoalsPageProcessor::class,
+      'H5P.GoalsAssessmentPage' => GoalsAssessmentPageProcessor::class,
+      'H5P.StandardPage' => StandardPageProcessor::class,
+      'H5P.FreeTextQuestion' => IVOpenEndedQuestionProcessor::class,
   );
 
   private $processors = array();
@@ -35,14 +47,14 @@ class H5PReport {
   /**
    * Generate the proper report depending on xAPI data.
    *
-   * @param object $xapiData
+   * @param H5PReportXAPIData $xapiData
    * @param string $forcedProcessor Force a processor type
    * @param bool $disableScoring Disables scoring for the report
    *
    * @return string A report
    */
-  public function generateReport($xapiData, $forcedProcessor = null, $disableScoring = false) {
-    $interactionType = $xapiData->interaction_type;
+  public function generateReport(H5PReportXAPIData  $xapiData, $forcedProcessor = null, $disableScoring = false) {
+    $interactionType = $xapiData->getInteractionType();
     if (!self::isSupportedVersion($xapiData)) {
       return self::renderUnsupportedVersionPage($xapiData);
     }
@@ -79,10 +91,10 @@ class H5PReport {
   /**
    * Generate the proper report for dynamically gradable content types depending on xAPI data.
    *
-   * @param object $xapiData
+   * @param H5PReportXAPIData $xapiData
    * @return string A report
    */
-  public function generateGradableReports($xapiData) {
+  public function generateGradableReports(H5PReportXAPIData $xapiData) {
     $results = array();
 
     foreach ($xapiData as $childData) {
@@ -111,7 +123,7 @@ class H5PReport {
   /**
    * Generate the wrapping element for a grading container
    *
-   * @param object $results
+   * @param array $results
    *
    * @return string HTML of the container and within it, gradable elements
    */
@@ -198,7 +210,7 @@ class H5PReport {
 
   /**
    * Caches instance of report generator.
-   * @return \H5PReport
+   * @return H5PReport
    */
   public static function getInstance() {
     static $instance;
