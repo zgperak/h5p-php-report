@@ -230,7 +230,7 @@ class H5PReportXAPIData {
 
     // Add context extensions
     $additionals['contextExtensions'] = isset($this->statement->context->extensions)
-      ? $this->statement->context->extensions : new stdClass();
+      ? $this->statement->context->extensions : new \stdClass();
 
     return (empty($additionals) ? '' : json_encode($additionals));
   }

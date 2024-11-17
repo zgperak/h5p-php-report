@@ -184,10 +184,10 @@ abstract class TypeProcessor {
    *
    * @param H5PReportXAPIData $xapiData
    *
-   * @return stdClass
+   * @return \stdClass
    */
   protected function getExtras(H5PReportXAPIData $xapiData) {
-    $extras = ($xapiData->getAdditionals() === '' ? new stdClass() : json_decode($xapiData->getAdditionals()));
+    $extras = ($xapiData->getAdditionals() === '' ? new \stdClass() : json_decode($xapiData->getAdditionals()));
     if (!empty($xapiData->getChildren())) {
       $extras->children = $xapiData->getChildren();
     }

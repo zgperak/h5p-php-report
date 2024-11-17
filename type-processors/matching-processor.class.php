@@ -176,8 +176,8 @@ class MatchingProcessor extends TypeProcessor  {
   /**
    * Sort handler for comparing result rows
    *
-   * @param stdClass $a
-   * @param stdClass $b
+   * @param \stdClass $a
+   * @param \stdClass $b
    * @return int
    */
   private static function rowcmp($a, $b) {
