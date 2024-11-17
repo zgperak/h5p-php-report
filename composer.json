@@ -1,0 +1,19 @@
+{
+    "name": "zgperak/h5p-php-report",
+    "description": "Fork of h5p/h5p-php-report",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Zgperak\\H5pPhpReport\\": ""
+        }
+    },
+    "authors": [
+        {
+            "name": "Tomislav Perković",
+            "email": "zgperak@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
