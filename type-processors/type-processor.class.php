@@ -1,4 +1,5 @@
 <?php
+namespace Zgperak\H5pPhpReport\TypeProcessors;
 
 require(__DIR__ . '/../html-purifier/HtmlReportPurifier.php');
 

@@ -1,4 +1,5 @@
 <?php
+namespace Zgperak\H5pPhpReport\TypeProcessors;
 
 /**
  * Class DocumentationToolProcessor
